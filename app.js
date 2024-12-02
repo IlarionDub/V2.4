@@ -2,10 +2,12 @@ let posts = [];
 let users = [];
 let currentPostIndex = 0;
 let loggedInUser = null;
+const BASE_URL = 'https://ilariondub.github.io/V2.4/'; // Актуальний URL
 
 let users1 = JSON.parse(localStorage.getItem("users1")) || [
     { name: "Admin", email: "admin@gmail.com", password: "Admin123", role: "admin" }
 ];
+
 
 // Завантаження даних із сервера під час ініціалізації
 document.addEventListener("DOMContentLoaded", async () => {
@@ -18,13 +20,12 @@ document.addEventListener("DOMContentLoaded", async () => {
 
         // Виконуємо інші ініціалізації
         await setupRouter();
-        startAutoSync();
         loadHomePage();
         updateUserUI();
     } catch (error) {
         console.error("Error during initialization:", error);
     }
-        updateUserUI();
+    updateUserUI();
 });
 
 
@@ -46,10 +47,12 @@ function prefillAuthor() {
     }
 }
 
+
+
 async function syncToServer(dataType, dataArray) {
     try {
         // Завантажуємо всі існуюdчі записи з сервера
-        const response = await fetch(`http://localhost:3000/${dataType}`);
+        const response = await fetch(`${BASE_URL}/${dataType}`);
         const existingData = await response.json();
 
         for (const item of dataArray) {
@@ -77,14 +80,14 @@ async function syncToServer(dataType, dataArray) {
 
             if (existingItem) {
                 // Якщо запис знайдено, видаляємо його
-                await fetch(`http://localhost:3000/${dataType}/${existingItem.id}`, {
+                await fetch(`${BASE_URL}/${dataType}/${existingItem.id}`, {
                     method: 'DELETE',
                 });
                 console.log(`Deleted duplicate ${dataType.slice(0, -1)} from server:`, existingItem);
             }
 
             // Додаємо новий запис
-            await fetch(`http://localhost:3000/${dataType}`, {
+            await fetch(`${BASE_URL}/${dataType}`, {
                 method: 'POST',
                 headers: {
                     'Content-Type': 'application/json',
@@ -102,7 +105,7 @@ async function syncToServer(dataType, dataArray) {
 // Функція для отримання даних із сервера
 async function syncFromServer(dataType) {
     try {
-        const response = await fetch(`http://localhost:3000/${dataType}`);
+        const response = await fetch(`${BASE_URL}/${dataType}`);
         const data = await response.json();
         console.log(`${dataType} synced from server:`, data);
 
@@ -127,23 +130,6 @@ async function syncFromServer(dataType) {
 
 
 
-
-// Автоматичне оновлення сервера кожні 5 секунд
-function startAutoSync() {
-    setInterval(async () => {
-        console.log("Starting auto-sync...");
-       await saveToLocalStorage();
-        await syncFromServer('users', data => {
-            users = data; // Оновлюємо локальний масив користувачів
-            localStorage.setItem("users", JSON.stringify(users));
-        });
-        await syncFromServer('posts', data => {
-            posts = data; // Оновлюємо локальний масив постів
-            localStorage.setItem("posts", JSON.stringify(posts));
-        });
-        console.log("Auto-sync complete");
-    }, 5000000000); // Оновлюємо кожні 5 секунд
-}
 
 // Запуск автоматичної синхронізації
 
@@ -684,7 +670,7 @@ function updateUserUI() {
         loginButton?.classList.remove("hidden");
         logoutButton?.classList.add("hidden");
         loggedInUserSpan?.classList.add("hidden");
-            loggedInUserSpan.innerText = "Logged in as: User";
+        loggedInUserSpan.innerText = "Logged in as: User";
     }
 }
 
@@ -756,8 +742,8 @@ async function showRegisterForm() {
         passwordInput.type = isPasswordVisible ? "password" : "text";
         togglePasswordButton.textContent = isPasswordVisible ? "👁️" : "🙈";
     });
-await saveToLocalStorage();
-updateUserUI(); // Оновлення кнопок авторизації
+    await saveToLocalStorage();
+    updateUserUI(); // Оновлення кнопок авторизації
 }
 
 
