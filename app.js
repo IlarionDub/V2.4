@@ -29,19 +29,15 @@ document.addEventListener("DOMContentLoaded", async () => {
 
 
 
+
 function handleCredentialResponse(response) {
     const data = jwt_decode(response.credential);
-    console.log(data); // Перевірте, які дані надає Google.
-
-    // Зберігаємо дані користувача.
     loggedInUser = {
         name: data.name,
         email: data.email,
-        picture: data.picture
     };
-
-    // Оновлюємо інтерфейс.
-    updateUserUI();
+    console.log("Logged in as:", loggedInUser.name);
+    document.getElementById("loggedInUser").innerText = `Welcome, ${loggedInUser.name}`;
 }
 function prefillAuthor() {
     const authorField = document.getElementById("author");
