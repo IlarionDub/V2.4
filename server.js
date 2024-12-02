@@ -18,9 +18,10 @@ const express = require('express');
 
 const app = express();
 
+app.use(cors()); // Увімкнути CORS для всіх запитів
+
 // Налаштування CORS для дозволу запитів з певного джерела
 
-const cors = require('cors');
 app.use(cors({
     origin: ['localhost:3000', 'ilariondub.github.io', 'a800-78-99-54-47.ngrok-free.app'],
     methods: ['GET', 'POST', 'PUT', 'DELETE']
